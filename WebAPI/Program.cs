@@ -1,6 +1,5 @@
 using Infrastructure;
 using Infrastructure.Entities.Users;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +12,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<IdentityDbContext>(
-    options => options.UseMySql(ServerVersion.AutoDetect("server=localhost;user=lanhq;password=lanhq;database=lanhq")));
+    options => options.UseMySql(
+        "server=localhost;user=lanhq;password=lanhq;database=lanhq",
+        new MariaDbServerVersion("10.11.6")));
+//options => options.UseMySql(ServerVersion.AutoDetect("server=localhost;user=lanhq;password=lanhq;database=lanhq")));
 
 builder.Services.AddAuthorization();
 
@@ -30,6 +32,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+app.UseCors(builder => builder
+     .AllowAnyOrigin()
+     .AllowAnyMethod()
+     .AllowAnyHeader()
+     );
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

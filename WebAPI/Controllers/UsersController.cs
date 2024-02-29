@@ -1,5 +1,6 @@
 ﻿using Infrastructure;
 using Infrastructure.Entities.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -18,6 +19,18 @@ namespace WebAPI.Controllers
         public List<ApplicationUser> Get()
         {
             return _context.Users.ToList();
+        }
+
+        [HttpPut("deactivate")]
+        [Authorize(Roles = "Admin")]
+        public void Put(String id)
+        {
+            ApplicationUser user = _context.Users.FirstOrDefault(x => x.Id == id);
+            if (user == null)
+            {
+                throw new Exception();
+            }
+            user.LockoutEnabled = true;
         }
     }
 }
