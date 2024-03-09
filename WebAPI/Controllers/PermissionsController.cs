@@ -1,11 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    /**
+     * Roles and Claims Controller
+     */
     [ApiController]
+    [Route("api/[controller]")]
     public class PermissionsController : ControllerBase
     {
+        public PermissionsController(RolesService)
+        {
+
+        }
     }
 }
