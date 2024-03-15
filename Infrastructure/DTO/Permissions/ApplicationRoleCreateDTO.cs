@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.DTO.Permissions
 {
-    public class CreateRoleDTO
+    public class ApplicationRoleCreateDTO
     {
         public string Name { get; set; }
     }

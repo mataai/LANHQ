@@ -4,9 +4,6 @@ namespace Infrastructure.Repositories.Users.Interfaces
 {
     public interface IPermissionsRepository
     {
-        public Task<IEnumerable<Permission>> GetPermissionsForUser(Guid userId);
-        public Task<IEnumerable<Permission>> GetPermissionsForRole(Guid roleId);
-        public Task<IEnumerable<Permission>> GetPermissionsForRole(string roleId);
         public Task<IEnumerable<Permission>> GetPermissionsForRoles(IEnumerable<string> roleNames);
         public Task<IEnumerable<ApplicationUser>> GetUsersWithPermission(Guid permissionId);
         public Task<IEnumerable<ApplicationRole>> GetRolesWithPermission(Guid permissionId);

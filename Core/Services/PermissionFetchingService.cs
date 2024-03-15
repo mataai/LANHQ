@@ -11,15 +11,14 @@ namespace Core.Services
         {
             this._permissionsRepo = permissionsRepo;
             this._rolesRepo = rolesRepo;
-
         }
 
         public async Task<IEnumerable<Permission>> GetPermissionsForUser(Guid userId)
         {
-            var userRoles = await _rolesRepo.GetRolesForUser(userId);
+            var userRoles = await _rolesRepo.GetRolesForUser(userId); 
             var permissions = new List<Permission>();
             permissions.AddRange(await _permissionsRepo.GetPermissionsForUser(userId));
-            permissions.AddRange(await _permissionsRepo.GetPermissionsForRoles(userRoles));
+            permissions.AddRange(await _permissionsRepo.GetPermissionsForRoles(userRoles)); 
             return permissions;
         }
     }

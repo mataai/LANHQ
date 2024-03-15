@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
 
         // POST: api/Permissions/Roles
         [HttpPost("Roles")]
-        public IActionResult CreateRole([FromBody] CreateRoleDTO role)
+        public IActionResult CreateRole([FromBody] ApplicationRoleCreateDTO role)
         {
             // TODO: Implement your logic to create a role
             EntityEntry<IdentityRole> result = _context.Roles.Add(new IdentityRole(role.Name));
