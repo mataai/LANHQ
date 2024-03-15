@@ -18,6 +18,7 @@ namespace WebAPI.Services
         {
             return await _roleRepository.GetRolesForUser(userId);
         }
+        
         public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles()
         {
             return await _roleRepository.GetRoles();
@@ -51,11 +52,6 @@ namespace WebAPI.Services
         public Task<ApplicationRoleDTO> UpdateRole(ApplicationRoleUpdateDTO role)
         {
             return _roleRepository.UpdateRole(role);
-        }
-
-        public bool DeleteRole(Guid id)
-        {
-            return _roleRepository.DeleteRole(id);
         }
 
         public Task<bool> AddUserToRole(int userId, string roleName)
@@ -92,6 +88,7 @@ namespace WebAPI.Services
         {
             return _roleRepository.RemoveUserFromRole(userId, roleName);
         }
+        
         public Task<bool> RemoveUsersFromRole(int userId, string roleName)
         {
             return _roleRepository.RemoveUserFromRole(userId, roleName);

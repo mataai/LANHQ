@@ -4,7 +4,7 @@ namespace Infrastructure.Repositories.Users.Interfaces
 {
     public interface IRolesRepository
     {
-        public Task<IEnumerable<ApplicationRole>> GetRoles();
+        public Task<List<ApplicationRole>> GetRoles();
         public Task<ApplicationRole> GetRole(Guid id);
         public Task<ApplicationRole> CreateRole(ApplicationRole role);
         public Task<ApplicationRole> UpdateRole(ApplicationRole role);

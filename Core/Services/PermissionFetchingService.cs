@@ -1,24 +1,25 @@
 ﻿using Infrastructure.Entities.Users;
-using Infrastructure.Repositories.Users;
+using Infrastructure.Repositories.Users.Interfaces;
 
 namespace Core.Services
 {
     public class PermissionFetchingService
     {
-        private PermissionsRepository _permissionsRepo;
-        private RolesRepository _rolesRepo;
-        public PermissionFetchingService(PermissionsRepository permissionsRepo, RolesRepository rolesRepo)
+        private IPermissionsRepository _permissionsRepo;
+        private IUserRepository _userRepo;
+        public PermissionFetchingService(IPermissionsRepository permissionsRepo, IUserRepository userRepo)
         {
-            this._permissionsRepo = permissionsRepo;
-            this._rolesRepo = rolesRepo;
+            _permissionsRepo = permissionsRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<IEnumerable<Permission>> GetPermissionsForUser(Guid userId)
         {
-            var userRoles = await _rolesRepo.GetRolesForUser(userId); 
+            var user = await _userRepo.GetByIdAsync(userId);
+            var userRoles = await _userRepo.GetRolesForUser(userId);
             var permissions = new List<Permission>();
-            permissions.AddRange(await _permissionsRepo.GetPermissionsForUser(userId));
-            permissions.AddRange(await _permissionsRepo.GetPermissionsForRoles(userRoles)); 
+            permissions.AddRange(user.Permissions);
+            permissions.AddRange(await _permissionsRepo.GetPermissionsForRoles(userRoles));
             return permissions;
         }
     }

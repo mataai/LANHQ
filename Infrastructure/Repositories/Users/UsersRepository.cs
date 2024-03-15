@@ -13,22 +13,7 @@ namespace Infrastructure.Repositories.Users
         {
             _context = context;
         }
-
-        public async Task<ApplicationUser> AddAsync(ApplicationUser user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
-        }
-        public async Task ActivateAsync(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                user.LockoutEnabled = false;
-                await _context.SaveChangesAsync();
-            }
-        }
+        
         public async Task DeactivateAsync(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -39,66 +24,60 @@ namespace Infrastructure.Repositories.Users
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<IEnumerable<ApplicationUser>> GetAllAsync()
+        
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
             return await _context.Users.ToListAsync();
         }
-        public async Task<ApplicationUser> GetByIdAsync(int id)
+        
+        public async Task<ApplicationUser> GetByIdAsync(Guid id)
         {
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
                 // TODO: throw custom exception
-                return null;
+                throw new Exception("User not found");
             }
             return user;
         }
+        
         public async Task<ApplicationUser> UpdateAsync(ApplicationUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return user;
         }
-        public Task<ApplicationUser> GetUserById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        
         public Task<ApplicationUser> GetUserByUsername(string username)
         {
             throw new NotImplementedException();
         }
+        
         public Task<ApplicationUser> GetUserByEmail(string email)
         {
             throw new NotImplementedException();
         }
-        public Task<ApplicationUser> UpdateUser(ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<ApplicationUser> DeactivateUser(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<IEnumerable<ApplicationUser>> GetUsers()
-        {
-            throw new NotImplementedException();
-        }
+        
         public Task<IEnumerable<ApplicationUser>> GetUsersWithPermission(Guid permissionId)
         {
             throw new NotImplementedException();
         }
+        
         public Task<IEnumerable<ApplicationUser>> GetUsersWithRole(Guid roleId)
         {
             throw new NotImplementedException();
         }
+        
         public Task<IEnumerable<string>> GetRolesForUser(Guid userId)
         {
             throw new NotImplementedException();
         }
+        
         public Task<IEnumerable<string>> GetRolesForUser(string username)
         {
             throw new NotImplementedException();
         }
+
     }
 }

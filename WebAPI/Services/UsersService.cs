@@ -14,7 +14,7 @@ namespace WebAPI.Services
 
         public async Task<ApplicationUserDTO> GetUserById(Guid id)
         {
-            return await _userRepository.GetUserById(id);
+            return await _userRepository.GetByIdAsync(id);
         }
 
         public async Task<ApplicationUserDTO> GetUserByUsername(string username)
