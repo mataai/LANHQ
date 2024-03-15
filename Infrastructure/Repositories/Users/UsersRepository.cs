@@ -7,9 +7,9 @@ namespace Infrastructure.Repositories.Users
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IdentityDbContext _context;
+        private readonly LANHQDbContext _context;
 
-        public UserRepository(IdentityDbContext context)
+        public UserRepository(LANHQDbContext context)
         {
             _context = context;
         }

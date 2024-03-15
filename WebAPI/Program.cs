@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<IdentityDbContext>(
+builder.Services.AddDbContext<LANHQDbContext>(
     options => options.UseMySql(
         "server=localhost;user=lanhq;password=lanhq;database=lanhq",
         new MariaDbServerVersion("10.11.6")));
@@ -20,7 +20,7 @@ builder.Services.AddDbContext<IdentityDbContext>(
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
-    .AddEntityFrameworkStores<IdentityDbContext>();
+    .AddEntityFrameworkStores<LANHQDbContext>();
 
 var app = builder.Build();
 

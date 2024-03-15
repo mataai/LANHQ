@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Core.Attributes
+﻿namespace Core.Attributes
 {
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
@@ -8,7 +6,7 @@ namespace Core.Attributes
     {
         public PermissionAuthorizeAttribute(string permission)
         {
-            Assembly.GetCallingAssembly();
+
         }
     }
 }

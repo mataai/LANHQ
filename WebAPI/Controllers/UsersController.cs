@@ -8,17 +8,17 @@ namespace WebAPI.Controllers
 {
     [Authorize]
     [ApiController]
-    [PermissionAuthorize]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private IdentityDbContext _context;
-        public UsersController(IdentityDbContext dbContext)
+        private LANHQDbContext _context;
+        public UsersController(LANHQDbContext dbContext)
         {
             _context = dbContext;
         }
 
         [HttpGet]
+        [PermissionAuthorize("users.get")]
         public List<ApplicationUser> Get()
         {
             return _context.Users.ToList();

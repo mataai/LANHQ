@@ -1,4 +1,3 @@
-using Core.Attributes;
 using Infrastructure;
 using Infrastructure.DTO.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +14,9 @@ namespace WebAPI.Controllers
     public class PermissionsController : ControllerBase
     {
 
-        private IdentityDbContext _context;
+        private LANHQDbContext _context;
 
-        public PermissionsController(IdentityDbContext context)
+        public PermissionsController(LANHQDbContext context)
         {
             _context = context;
         }
@@ -70,16 +69,6 @@ namespace WebAPI.Controllers
         {
             // TODO: Implement your logic to retrieve claims
             return Ok(_context.RoleClaims.Where(user => user.Id.Equals(roleId))); // Return an empty list or your claims list
-        }
-
-        //POST: api/Permissions/Claims
-        [HttpPost("AssignClaimsToUser")]
-        public IActionResult AssignClaimsToUser([FromBody] string claim)
-        {
-            // TODO: Implement your logic to create a claim
-            User.Claims.ap
-            return Ok(claim);
-            //return CreatedAtAction(nameof(GetClaims), new { id = 0 /* Return the created claim ID */ }, claim);
         }
 
         [HttpDelete("Claims/{id}")]
