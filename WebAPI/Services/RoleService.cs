@@ -16,7 +16,7 @@ namespace WebAPI.Services
 
         public async Task<IEnumerable<string>> GetRolesForUser(Guid userId)
         {
-            return await _roleRepository.GetRolesForUser(userId);
+            return await _roleRepository.(userId);
         }
         
         public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles()

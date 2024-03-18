@@ -4,7 +4,7 @@ namespace Infrastructure.Repositories.Users.Interfaces
 {
     public interface IUserRepository
     {
-        public Task DeactivateAsync(int id);
+        public Task<bool> DeactivateAsync(Guid id);
         public Task<ApplicationUser> UpdateAsync(ApplicationUser user);
         public Task<ApplicationUser> GetByIdAsync(Guid id);
         public Task<ApplicationUser> GetUserByUsername(string username);

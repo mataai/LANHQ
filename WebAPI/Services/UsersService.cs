@@ -1,4 +1,5 @@
-﻿using Infrastructure.DTO.Users;
+﻿using AutoMapper;
+using Core.DTO.Users;
 using Infrastructure.Repositories.Users.Interfaces;
 
 namespace WebAPI.Services
@@ -7,50 +8,68 @@ namespace WebAPI.Services
     {
         //create crud using the user repository
         private IUserRepository _userRepository;
-        public UsersService(IUserRepository userRepository)
+        private IMapper _mapper;
+        public UsersService(IUserRepository userRepository, IMapper mapper)
         {
             this._userRepository = userRepository;
+            this._mapper = mapper;
         }
 
         public async Task<ApplicationUserDTO> GetUserById(Guid id)
         {
-            return await _userRepository.GetByIdAsync(id);
+            var result = await _userRepository.GetByIdAsync(id);
+            return _mapper.Map<ApplicationUserDTO>(result);
         }
 
         public async Task<ApplicationUserDTO> GetUserByUsername(string username)
         {
-            return await _userRepository.GetUserByUsername(username);
+            var result = await _userRepository.GetUserByUsername(username);
+            return _mapper.Map<ApplicationUserDTO>(result);
         }
 
         public async Task<ApplicationUserDTO> GetUserByEmail(string email)
         {
-            return await _userRepository.GetUserByEmail(email);
+            var result = await _userRepository.GetUserByEmail(email);
+            return _mapper.Map<ApplicationUserDTO>(result);
         }
 
 
-        public async Task<ApplicationUserDTO> UpdateUser(ApplicationUserCreateDTO user)
+        public async Task<ApplicationUserDTO> UpdateUser(Guid userId, ApplicationUserUpdateDTO updateRequest)
         {
-            return await _userRepository.UpdateUser(user);
+            /* TODO check permissions of the executing user for specific fields
+             * ex: 
+             * ADMIN => update all fields
+             * SELF => update only self username address and etc...
+             */
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            user.UserName = updateRequest.UserName;
+
+            var result = await _userRepository.UpdateAsync(user);
+            return _mapper.Map<ApplicationUserDTO>(result);
         }
 
-        public async Task<ApplicationUserDTO> DeactivateUser(Guid id)
-        {
-            return await _userRepository.DeactivateUser(id);
-        }
+
+        //TODO: Implement generic model for updates and creates
+        public async Task<bool> DeactivateUser(Guid id) => await _userRepository.DeactivateAsync(id);
+       
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsers()
         {
-            return await _userRepository.GetUsers();
+            var users = await _userRepository.GetUsersAsync();
+            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
         }
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsersWithPermission(Guid permissionId)
         {
-            return await _userRepository.GetUsersWithPermission(permissionId);
+            var users = await _userRepository.GetUsersWithPermission(permissionId);
+            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
         }
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsersWithRole(Guid roleId)
         {
-            return await _userRepository.GetUsersWithRole(roleId);
+            var users = await _userRepository.GetUsersWithRole(roleId);
+            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
         }
 
         public async Task<IEnumerable<string>> GetRolesForUser(Guid userId)

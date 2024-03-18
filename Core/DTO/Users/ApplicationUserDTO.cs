@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.DTO.Users
+﻿namespace Core.DTO.Users
 {
     public class ApplicationUserDTO
     {

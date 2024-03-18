@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.DTO.Permissions
+﻿namespace Core.DTO.Permissions
 {
     public class ApplicationRoleCreateDTO
     {
