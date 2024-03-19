@@ -5,17 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Users
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(LANHQDbContext context, UserManager<ApplicationUser> userManager) : IUserRepository
     {
-        private readonly LANHQDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public UserRepository(LANHQDbContext context, UserManager<ApplicationUser> userManager)
-        {
-            _context = context;
-            _userManager = userManager;
-        }
-
+        private readonly LANHQDbContext _context = context;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         public async Task<bool> DeactivateAsync(Guid id)
         {
@@ -37,14 +30,7 @@ namespace Infrastructure.Repositories.Users
 
         public async Task<ApplicationUser> GetByIdAsync(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                // TODO: throw custom exception
-                throw new Exception("User not found");
-            }
-            return user;
+            return await _context.Users.FindAsync(id) ?? throw new Exception("User not found");
         }
 
         public async Task<ApplicationUser> UpdateAsync(ApplicationUser user)
@@ -98,14 +84,8 @@ namespace Infrastructure.Repositories.Users
         // Prioritize usage of roleName over roleId for performance optimization
         public async Task<bool> AddUserToRole(ApplicationUser user, Guid roleId)
         {
-            ApplicationRole? role = await _context.Roles.FindAsync(roleId);
-            if (role == null)
-            {
-                // TODO: throw custom exception
-                throw new Exception("Role not found");
-            }
-
-            var result = await _userManager.AddToRoleAsync(user, role.Name);
+            ApplicationRole? role = await _context.Roles.FindAsync(roleId) ?? throw new Exception("Role not found");
+            var result = await _userManager.AddToRoleAsync(user, role.Name!);
             if (!result.Succeeded)
             {
                 // TODO: throw custom exception
@@ -116,7 +96,8 @@ namespace Infrastructure.Repositories.Users
 
         public async Task<bool> RemoveUserFromRole(Guid userId, string roleName)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId) ?? throw new Exception("User not found");
+
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
             if(!result.Succeeded)
             {

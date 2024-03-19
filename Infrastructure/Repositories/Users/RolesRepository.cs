@@ -6,41 +6,23 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories.Users
 {
 
-    public class RolesRepository : IRolesRepository
+    public class RolesRepository(LANHQDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : IRolesRepository
     {
-        private readonly LANHQDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-
-        public RolesRepository(LANHQDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
-        {
-            this._context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
+        private readonly LANHQDbContext _context = context;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
         public Task<List<ApplicationRole>> GetRoles() => _context.Roles.ToListAsync();
 
         public async Task<ApplicationRole> GetRoleById(Guid roleId)
         {
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
-            if (role == null)
-            {
-                // TODO: throw custom exception
-                throw new Exception("Role not found");
-            }
-            return role;
+            return await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId) ?? throw new Exception("Role not found");
+
         }
 
         public async Task<ApplicationRole> GetRoleByName(string roleName)
         {
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
-            if (role == null)
-            {
-                // TODO: throw custom exception
-                throw new Exception("Role not found");
-            }
-            return role;
+            return await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName) ?? throw new Exception("Role not found");
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInRole(string roleName)
@@ -100,21 +82,16 @@ namespace Infrastructure.Repositories.Users
             }
             else
             {
-                return await _roleManager.FindByNameAsync(roleName);
+                return await _roleManager.FindByNameAsync(roleName) ?? throw new Exception("Role not found");
             }
         }
 
         public async Task<bool> UpdateRole(string roleName, string newRoleName)
         {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            if (role == null)
-            {
-                // TODO error handling
-                throw new Exception("Role not found");
-            }
+            var role = await _roleManager.FindByNameAsync(roleName) ?? throw new Exception("Role not found");
             role.Name = newRoleName;
-            await _roleManager.UpdateAsync(role);
-            return true;
+            var result = await _roleManager.UpdateAsync(role);
+            return result.Succeeded;
         }
 
         public async Task<bool> RoleExists(string roleName)
@@ -122,16 +99,9 @@ namespace Infrastructure.Repositories.Users
             return await _roleManager.RoleExistsAsync(roleName);
         }
 
-        public Task<ApplicationRole> GetRole(Guid id)
+        public async Task<ApplicationRole> GetRole(Guid id)
         {
-            var role = _context.Roles.Find(id);
-            if (role == null)
-            {
-                // TODO: throw custom exception
-                throw new Exception("Role not found");
-            }
-            return Task.FromResult(role);
-
+            return await _context.Roles.FindAsync(id) ?? throw new Exception("Role not found");
         }
 
         public Task<ApplicationRole> UpdateRole(ApplicationRole role)

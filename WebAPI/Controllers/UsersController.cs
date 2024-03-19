@@ -1,6 +1,6 @@
 ﻿using Core.Attributes;
-using Core.DTO.Permissions;
-using Core.DTO.Users;
+using Core.DataContracts.Systems.Permissions;
+using Core.DataContracts.Systems.Users;
 using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +11,10 @@ namespace WebAPI.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController(IUsersService usersService, IPermissionFetchingService permissionFetchingService) : ControllerBase
     {
-        private readonly IUsersService _usersService;
-        private readonly IPermissionFetchingService _permissionFetchingService;
-        public UsersController(IUsersService usersService, IPermissionFetchingService permissionFetchingService)
-        {
-            _usersService = usersService;
-            _permissionFetchingService = permissionFetchingService;
-        }
+        private readonly IUsersService _usersService = usersService;
+        private readonly IPermissionFetchingService _permissionFetchingService = permissionFetchingService;
 
         [HttpGet]
         [PermissionAuthorize("users.get")]

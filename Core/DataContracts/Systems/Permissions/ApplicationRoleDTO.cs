@@ -1,4 +1,4 @@
-﻿namespace Core.DTO.Permissions
+﻿namespace Core.DataContracts.Systems.Permissions
 {
     public class ApplicationRoleDTO
     {

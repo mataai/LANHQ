@@ -1,4 +1,4 @@
-﻿namespace Core.DTO.Users
+﻿namespace Core.DataContracts.Systems.Users
 {
     public class AddUserToRoleDTO
     {

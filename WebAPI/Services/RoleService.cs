@@ -1,21 +1,15 @@
 ﻿using AutoMapper;
-using Core.DTO.Permissions;
-using Core.DTO.Users;
+using Core.DataContracts.Systems.Permissions;
+using Core.DataContracts.Systems.Users;
 using Infrastructure.Repositories.Users.Interfaces;
 
 namespace WebAPI.Services
 {
-    public class RoleService
+    public class RoleService(IRolesRepository roleRepository, IMapper mapper)
     {
         // create crud using the roles repository
-        private IRolesRepository _roleRepository;
-        private IMapper _mapper;
-        public RoleService(IRolesRepository roleRepository, IMapper mapper)
-        {
-            this._roleRepository = roleRepository;
-            _mapper = mapper;
-        }
-
+        private readonly IRolesRepository _roleRepository = roleRepository;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles() => _mapper.Map<IEnumerable<ApplicationRoleDTO>>(await _roleRepository.GetRoles());
 

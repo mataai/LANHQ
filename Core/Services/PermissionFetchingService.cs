@@ -3,15 +3,10 @@ using Infrastructure.Repositories.Users.Interfaces;
 
 namespace Core.Services
 {
-    public class PermissionFetchingService : IPermissionFetchingService
+    public class PermissionFetchingService(IPermissionsRepository permissionsRepo, IUserRepository userRepo) : IPermissionFetchingService
     {
-        private IPermissionsRepository _permissionsRepo;
-        private IUserRepository _userRepo;
-        public PermissionFetchingService(IPermissionsRepository permissionsRepo, IUserRepository userRepo)
-        {
-            _permissionsRepo = permissionsRepo;
-            _userRepo = userRepo;
-        }
+        private readonly IPermissionsRepository _permissionsRepo = permissionsRepo;
+        private readonly IUserRepository _userRepo = userRepo;
 
         public async Task<IEnumerable<Permission>> GetPermissionsForUser(Guid userId)
         {

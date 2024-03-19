@@ -1,14 +1,12 @@
-using Core.DTO;
+using Core.DataContracts;
+using Core.Middlewares;
 using Infrastructure;
 using Infrastructure.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
@@ -44,6 +42,7 @@ app.UseCors(builder => builder
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseExceptionMiddleware();
 
 app.MapControllers();
 
