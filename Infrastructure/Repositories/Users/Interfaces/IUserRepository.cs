@@ -14,6 +14,9 @@ namespace Infrastructure.Repositories.Users.Interfaces
         public Task<IEnumerable<ApplicationUser>> GetUsersWithRole(Guid roleId);
         public Task<IEnumerable<string>> GetRolesForUser(Guid userId);
         public Task<IEnumerable<string>> GetRolesForUser(string username);
-
+        public Task<bool> AddUserToRole(ApplicationUser user, string roleName);
+        public Task<bool> RemoveUserFromRole(ApplicationUser user, string roleName);
+        public Task<bool> RemoveAllRolesFromUser(ApplicationUser user);
+        public Task<bool> RemoveUsersFromRole(List<ApplicationUser> users, string roleName);
     }
 }

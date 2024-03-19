@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Entities.Users;
 using Infrastructure.Repositories.Users.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Users
@@ -7,11 +8,14 @@ namespace Infrastructure.Repositories.Users
     public class UserRepository : IUserRepository
     {
         private readonly LANHQDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRepository(LANHQDbContext context)
+        public UserRepository(LANHQDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
 
         public async Task<bool> DeactivateAsync(Guid id)
         {
@@ -80,5 +84,38 @@ namespace Infrastructure.Repositories.Users
             throw new NotImplementedException();
         }
 
+        public async Task<bool> AddUserToRole(ApplicationUser user, string roleName)
+        {
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            if(!result.Succeeded)
+            {
+                // TODO: throw custom exception
+                throw new Exception("Error adding user to role");
+            }
+            return result.Succeeded;
+        }
+
+        public async Task<bool> RemoveUserFromRole(ApplicationUser user, string roleName)
+        {
+            var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+            if(!result.Succeeded)
+            {
+                // TODO: throw custom exception
+                throw new Exception("Error removing user from role");
+            }
+            return result.Succeeded;
+        }
+
+        public async Task<bool> RemoveAllRolesFromUser(ApplicationUser user)
+        {
+            // TODO: Manually log changes 
+            var result = await _context.UserRoles.Where(ur => ur.UserId == user.Id).ExecuteDeleteAsync();
+            return result >= 1;
+        }
+
+        public Task<bool> RemoveUsersFromRole(List<ApplicationUser> users, string roleName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

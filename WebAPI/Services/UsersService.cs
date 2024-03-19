@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Core.DTO.Users;
 using Infrastructure.Repositories.Users.Interfaces;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Services
 {
-    public class UsersService
+    public class UsersService : IUsersService
     {
         //create crud using the user repository
         private IUserRepository _userRepository;
@@ -51,8 +52,8 @@ namespace WebAPI.Services
 
 
         //TODO: Implement generic model for updates and creates
-        public async Task<bool> DeactivateUser(Guid id) => await _userRepository.DeactivateAsync(id);
-       
+        public Task<bool> DeactivateUser(Guid id) => _userRepository.DeactivateAsync(id);
+
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsers()
         {
@@ -80,6 +81,14 @@ namespace WebAPI.Services
         public async Task<IEnumerable<string>> GetRolesForUser(string username)
         {
             return await _userRepository.GetRolesForUser(username);
+        }
+
+
+        //TODO: Implement generic model for updates and creates
+        public async Task<bool> AddUserToRole(Guid userId, string roleName)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            return await _userRepository.AddUserToRole(user, roleName);
         }
 
     }

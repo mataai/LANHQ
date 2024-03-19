@@ -1,8 +1,9 @@
 ﻿using Core.Attributes;
-using Infrastructure;
+using Core.DTO.Users;
 using Infrastructure.Entities.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Controllers
 {
@@ -11,36 +12,23 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private LANHQDbContext _context;
-        public UsersController(LANHQDbContext dbContext)
+        private readonly IUsersService _usersService;
+        public UsersController(IUsersService usersService)
         {
-            _context = dbContext;
+            _usersService = usersService;
         }
 
         [HttpGet]
         [PermissionAuthorize("users.get")]
-        public List<ApplicationUser> Get()
-        {
-            return _context.Users.ToList();
-        }
+        public Task<IEnumerable<ApplicationUserDTO>> Get() => _usersService.GetUsers();
 
-        [HttpPut("deactivate")]
-        //[Authorize(Roles = "Admin")]
-        public ActionResult Put(String id)
-        {
-            //ApplicationUser user = _context.Users.FirstOrDefault(x => x.Id == id);
+        [HttpGet("{id}")]
+        [PermissionAuthorize("users.getById")]
+        [PermissionAuthorize("users.self")]
+        public Task<ApplicationUserDTO> Get(Guid id) => _usersService.GetUserById(id);
 
-            //if (user == null)
-            //{
-            //    throw new Exception();
-            //}
-
-            //user.LockoutEnabled = true;
-
-            User.IsInRole("admin");
-            User.Claims.Any(claim => claim.Type == "Test");
-
-            return new JsonResult(HttpContext.User?.Identity);
-        }
+        [HttpPost]
+        [PermissionAuthorize("users.assign_role")]
+        public Task<bool> AddUserToRole([FromBody] AddUserToRoleDTO request) => _usersService.AddUserToRole(request.UserId, request.RoleName);
     }
 }
