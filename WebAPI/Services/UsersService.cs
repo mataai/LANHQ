@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.DTO.Users;
+using Infrastructure.Repositories.Users;
 using Infrastructure.Repositories.Users.Interfaces;
 using WebAPI.Services.Interfaces;
 
@@ -12,8 +13,8 @@ namespace WebAPI.Services
         private IMapper _mapper;
         public UsersService(IUserRepository userRepository, IMapper mapper)
         {
-            this._userRepository = userRepository;
-            this._mapper = mapper;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<ApplicationUserDTO> GetUserById(Guid id)
@@ -34,7 +35,6 @@ namespace WebAPI.Services
             return _mapper.Map<ApplicationUserDTO>(result);
         }
 
-
         public async Task<ApplicationUserDTO> UpdateUser(Guid userId, ApplicationUserUpdateDTO updateRequest)
         {
             /* TODO check permissions of the executing user for specific fields
@@ -50,10 +50,8 @@ namespace WebAPI.Services
             return _mapper.Map<ApplicationUserDTO>(result);
         }
 
-
         //TODO: Implement generic model for updates and creates
         public Task<bool> DeactivateUser(Guid id) => _userRepository.DeactivateAsync(id);
-
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsers()
         {
@@ -91,5 +89,9 @@ namespace WebAPI.Services
             return await _userRepository.AddUserToRole(user, roleName);
         }
 
+        public Task<bool> RemoveUserFromRole(Guid userId, string roleName)
+        {
+            return _userRepository.RemoveUserFromRole(userId, roleName);
+        }
     }
 }

@@ -3,7 +3,7 @@ using Infrastructure.Repositories.Users.Interfaces;
 
 namespace Core.Services
 {
-    public class PermissionFetchingService
+    public class PermissionFetchingService : IPermissionFetchingService
     {
         private IPermissionsRepository _permissionsRepo;
         private IUserRepository _userRepo;

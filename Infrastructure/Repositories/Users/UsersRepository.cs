@@ -95,8 +95,28 @@ namespace Infrastructure.Repositories.Users
             return result.Succeeded;
         }
 
-        public async Task<bool> RemoveUserFromRole(ApplicationUser user, string roleName)
+        // Prioritize usage of roleName over roleId for performance optimization
+        public async Task<bool> AddUserToRole(ApplicationUser user, Guid roleId)
         {
+            ApplicationRole? role = await _context.Roles.FindAsync(roleId);
+            if (role == null)
+            {
+                // TODO: throw custom exception
+                throw new Exception("Role not found");
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, role.Name);
+            if (!result.Succeeded)
+            {
+                // TODO: throw custom exception
+                throw new Exception("Error adding user to role");
+            }
+            return result.Succeeded;
+        }
+
+        public async Task<bool> RemoveUserFromRole(Guid userId, string roleName)
+        {
+            var user = await _context.Users.FindAsync(userId);
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
             if(!result.Succeeded)
             {
@@ -106,10 +126,10 @@ namespace Infrastructure.Repositories.Users
             return result.Succeeded;
         }
 
-        public async Task<bool> RemoveAllRolesFromUser(ApplicationUser user)
+        public async Task<bool> RemoveAllRolesFromUser(Guid userId)
         {
             // TODO: Manually log changes 
-            var result = await _context.UserRoles.Where(ur => ur.UserId == user.Id).ExecuteDeleteAsync();
+            var result = await _context.UserRoles.Where(ur => ur.UserId == userId).ExecuteDeleteAsync();
             return result >= 1;
         }
 

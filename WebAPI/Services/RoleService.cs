@@ -1,6 +1,6 @@
-﻿using Infrastructure.DTO.Permissions;
-using Infrastructure.DTO.Users;
-using Infrastructure.Entities.Users;
+﻿using AutoMapper;
+using Core.DTO.Permissions;
+using Core.DTO.Users;
 using Infrastructure.Repositories.Users.Interfaces;
 
 namespace WebAPI.Services
@@ -9,89 +9,57 @@ namespace WebAPI.Services
     {
         // create crud using the roles repository
         private IRolesRepository _roleRepository;
-        public RoleService(IRolesRepository roleRepository)
+        private IMapper _mapper;
+        public RoleService(IRolesRepository roleRepository, IMapper mapper)
         {
             this._roleRepository = roleRepository;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<string>> GetRolesForUser(Guid userId)
-        {
-            return await _roleRepository.(userId);
-        }
-        
-        public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles()
-        {
-            return await _roleRepository.GetRoles();
-        }
+
+        public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles() => _mapper.Map<IEnumerable<ApplicationRoleDTO>>(await _roleRepository.GetRoles());
 
         public async Task<ApplicationRoleDTO> GetRoleById(Guid id)
         {
-            return await _roleRepository.GetRole(id);
+            return _mapper.Map<ApplicationRoleDTO>(await _roleRepository.GetRole(id));
         }
 
-        public Task<IEnumerable<string>> GetRolesForUserName(string username)
+        public async Task<ApplicationRoleDTO> GetRole(Guid id)
         {
-            return _roleRepository.GetRolesForUserName(username);
+            return _mapper.Map<ApplicationRoleDTO>(await _roleRepository.GetRole(id));
         }
 
-        public Task<IEnumerable<string>> GetRolesForUserEmail(string username)
+        public async Task<ApplicationRoleDTO> CreateRole(ApplicationRoleCreateDTO role)
         {
-            return _roleRepository.GetRolesForUserEmail(username);
+            return _mapper.Map<ApplicationRoleDTO>(await _roleRepository.CreateRole(role.Name, role.Description));
         }
 
-        public Task<ApplicationRoleDTO> GetRole(Guid id)
+        public async Task<ApplicationRoleDTO> UpdateRole(Guid roleId, ApplicationRoleUpdateDTO role)
         {
-            return _roleRepository.GetRole(id);
+            var roleEntity = await _roleRepository.GetRole(roleId);
+            roleEntity.Name = role.Name;
+            roleEntity.Description = role.Description;
+            return _mapper.Map<ApplicationRoleDTO>(_roleRepository.UpdateRole(roleEntity));
         }
 
-        public Task<ApplicationRoleDTO> CreateRole(ApplicationRoleCreateDTO role)
+        public async Task<bool> DeleteRole(Guid roleName)
         {
-            return _roleRepository.CreateRole(role);
+            return await _roleRepository.DeleteRole(roleName);
         }
 
-        public Task<ApplicationRoleDTO> UpdateRole(ApplicationRoleUpdateDTO role)
+        public async Task<ApplicationRoleDTO> GetRoleByName(string roleName)
         {
-            return _roleRepository.UpdateRole(role);
+            return _mapper.Map<ApplicationRoleDTO>(await _roleRepository.GetRoleByName(roleName));
         }
 
-        public Task<bool> AddUserToRole(int userId, string roleName)
+        public async Task<IEnumerable<ApplicationUserDTO>> GetUsersInRole(string roleName)
         {
-            return _roleRepository.AddUserToRole(userId, roleName);
+            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(await _roleRepository.GetUsersInRole(roleName));
         }
 
-        public Task<bool> CreateRole(string roleName)
+        public async Task<IEnumerable<ApplicationUserDTO>> GetUsersNotInRole(string roleName)
         {
-            return _roleRepository.CreateRole(roleName);
-        }
-
-        public Task<bool> DeleteRole(string roleName)
-        {
-            return _roleRepository.DeleteRole(roleName);
-        }
-
-        public Task<ApplicationRoleDTO> GetRoleByName(string roleName)
-        {
-            return _roleRepository.GetRoleByName(roleName);
-        }
-
-        public Task<IEnumerable<ApplicationUserDTO>> GetUsersInRole(string roleName)
-        {
-            return _roleRepository.GetUsersInRole(roleName);
-        }
-
-        public Task<IEnumerable<ApplicationUserDTO>> GetUsersNotInRole(string roleName)
-        {
-            return _roleRepository.GetUsersNotInRole(roleName);
-        }
-
-        public Task<bool> RemoveUserFromRole(int userId, string roleName)
-        {
-            return _roleRepository.RemoveUserFromRole(userId, roleName);
-        }
-        
-        public Task<bool> RemoveUsersFromRole(int userId, string roleName)
-        {
-            return _roleRepository.RemoveUserFromRole(userId, roleName);
+            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(await _roleRepository.GetUsersNotInRole(roleName));
         }
 
         public Task<bool> RoleExists(string roleName)

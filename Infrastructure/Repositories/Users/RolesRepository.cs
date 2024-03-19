@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories.Users
         }
 
         public Task<List<ApplicationRole>> GetRoles() => _context.Roles.ToListAsync();
-        
+
         public async Task<ApplicationRole> GetRoleById(Guid roleId)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories.Users
             }
             return role;
         }
-        
+
         public async Task<ApplicationRole> GetRoleByName(string roleName)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
@@ -42,28 +42,19 @@ namespace Infrastructure.Repositories.Users
             }
             return role;
         }
-        
+
         public async Task<IEnumerable<ApplicationUser>> GetUsersInRole(string roleName)
         {
             return await _userManager.GetUsersInRoleAsync(roleName);
         }
-        
+
         public async Task<IEnumerable<ApplicationUser>> GetUsersNotInRole(string roleName)
         {
             var users = await _userManager.Users.ToListAsync();
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
             return users.Except(usersInRole);
         }
-        
-        public async Task<bool> AddUserToRole(ApplicationUser user, string roleName)
-        {
-            var result = await _userManager.AddToRoleAsync(user, roleName);
 
-            // todo no success
-
-            return result.Succeeded;
-        }
-        
         public Task<bool> RemoveAllRolesFromUser(ApplicationUser user)
         {
             var roles = _userManager.GetRolesAsync(user);
@@ -76,7 +67,7 @@ namespace Infrastructure.Repositories.Users
             return Task.FromResult(result.Result.Succeeded);
 
         }
-        
+
         public async Task<bool> RemoveUserFromRole(ApplicationUser user, string roleName)
         {
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
@@ -85,7 +76,7 @@ namespace Infrastructure.Repositories.Users
 
             return result.Succeeded;
         }
-        
+
         public async Task<bool> RemoveUsersFromRole(List<ApplicationUser> users, string roleName)
         {
             foreach (ApplicationUser user in users)
@@ -98,13 +89,21 @@ namespace Infrastructure.Repositories.Users
             }
             return true;
         }
-        
-        public async Task<bool> CreateRole(string roleName)
+
+        public async Task<ApplicationRole> CreateRole(string roleName, string description)
         {
-            await _roleManager.CreateAsync(new ApplicationRole(roleName));
-            return true;
+            var result = await _roleManager.CreateAsync(new ApplicationRole(roleName, description));
+            if (!result.Succeeded)
+            {
+                // TODO error handling
+                throw new Exception("Role not created");
+            }
+            else
+            {
+                return await _roleManager.FindByNameAsync(roleName);
+            }
         }
-        
+
         public async Task<bool> UpdateRole(string roleName, string newRoleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
@@ -117,24 +116,12 @@ namespace Infrastructure.Repositories.Users
             await _roleManager.UpdateAsync(role);
             return true;
         }
-        
-        public async Task<bool> DeleteRole(string roleName)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            if (role == null)
-            {
-                // TODO error handling
-                throw new Exception("Role not found");
-            }
-            await _roleManager.DeleteAsync(role);
-            return true;
-        }
-        
+
         public async Task<bool> RoleExists(string roleName)
         {
             return await _roleManager.RoleExistsAsync(roleName);
         }
-        
+
         public Task<ApplicationRole> GetRole(Guid id)
         {
             var role = _context.Roles.Find(id);
@@ -146,25 +133,17 @@ namespace Infrastructure.Repositories.Users
             return Task.FromResult(role);
 
         }
-        
-        public Task<ApplicationRole> CreateRole(ApplicationRole role)
-        {
-            var result = _context.Roles.Add(role);
-            _context.SaveChanges();
-            return Task.FromResult(result.Entity);
 
-        }
-        
         public Task<ApplicationRole> UpdateRole(ApplicationRole role)
         {
             var result = _context.Roles.Update(role);
             _context.SaveChanges();
             return Task.FromResult(result.Entity);
         }
-        
-        public bool DeleteRole(Guid id)
+
+        public async Task<bool> DeleteRole(Guid id)
         {
-            var role = _context.Roles.Find(id);
+            var role = await _context.Roles.FindAsync(id);
             if (role != null)
             {
                 _context.Roles.Remove(role);
