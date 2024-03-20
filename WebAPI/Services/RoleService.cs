@@ -16,7 +16,6 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-
         public async Task<IEnumerable<ApplicationRoleDTO>> GetRoles() => _mapper.Map<IEnumerable<ApplicationRoleDTO>>(await _roleRepository.GetRoles());
 
         public async Task<ApplicationRoleDTO> GetRoleById(Guid id)

@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [PermissionAuthorize("users.get")]
-        public ActionResult<IEnumerable<ApplicationUserDTO>> Get() => Ok(_usersService.GetUsers());
+        public ActionResult<IEnumerable<ApplicationUserDTO>> Get([FromQuery] string roles = null, [FromQuery] string search = null) => Ok(_usersService.GetUsers());
 
         [HttpGet("{id}")]
         [PermissionAuthorize("users.getById")]

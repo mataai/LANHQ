@@ -64,22 +64,12 @@ namespace Infrastructure.Repositories.Users
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ApplicationUser>> GetUsersWithPermission(Guid permissionId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IEnumerable<ApplicationUser>> GetUsersWithRole(Guid roleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<string>> GetRolesForUser(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<string>> GetRolesForUser(string username)
+        public Task<IEnumerable<string>> GetUserRoles(Guid userId)
         {
             throw new NotImplementedException();
         }
@@ -114,7 +104,7 @@ namespace Infrastructure.Repositories.Users
             return result.Succeeded;
         }
 
-        public async Task<bool> RemoveUserFromRole(Guid userId, string roleName)
+        public async Task<bool> RemoveUserRole(Guid userId, string roleName)
         {
             var user = await _context.Users.FindAsync(userId);
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
@@ -126,14 +116,12 @@ namespace Infrastructure.Repositories.Users
             return result.Succeeded;
         }
 
-        public async Task<bool> RemoveAllRolesFromUser(Guid userId)
+        public Task<bool> RemoveUserRole(Guid user, string roleName)
         {
-            // TODO: Manually log changes 
-            var result = await _context.UserRoles.Where(ur => ur.UserId == userId).ExecuteDeleteAsync();
-            return result >= 1;
+            throw new NotImplementedException();
         }
 
-        public Task<bool> RemoveUsersFromRole(List<ApplicationUser> users, string roleName)
+        public Task<bool> RemoveUserRoles(Guid user, Guid roleId)
         {
             throw new NotImplementedException();
         }

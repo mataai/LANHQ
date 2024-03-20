@@ -23,18 +23,6 @@ namespace WebAPI.Services
             return _mapper.Map<ApplicationUserDTO>(result);
         }
 
-        public async Task<ApplicationUserDTO> GetUserByUsername(string username)
-        {
-            var result = await _userRepository.GetUserByUsername(username);
-            return _mapper.Map<ApplicationUserDTO>(result);
-        }
-
-        public async Task<ApplicationUserDTO> GetUserByEmail(string email)
-        {
-            var result = await _userRepository.GetUserByEmail(email);
-            return _mapper.Map<ApplicationUserDTO>(result);
-        }
-
         public async Task<ApplicationUserDTO> UpdateUser(Guid userId, ApplicationUserUpdateDTO updateRequest)
         {
             /* TODO check permissions of the executing user for specific fields
@@ -59,12 +47,6 @@ namespace WebAPI.Services
             return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
         }
 
-        public async Task<IEnumerable<ApplicationUserDTO>> GetUsersWithPermission(Guid permissionId)
-        {
-            var users = await _userRepository.GetUsersWithPermission(permissionId);
-            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
-        }
-
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsersWithRole(Guid roleId)
         {
             var users = await _userRepository.GetUsersWithRole(roleId);
@@ -73,25 +55,30 @@ namespace WebAPI.Services
 
         public async Task<IEnumerable<string>> GetRolesForUser(Guid userId)
         {
-            return await _userRepository.GetRolesForUser(userId);
+            return await _userRepository.GetUserRoles(userId);
         }
-
-        public async Task<IEnumerable<string>> GetRolesForUser(string username)
-        {
-            return await _userRepository.GetRolesForUser(username);
-        }
-
 
         //TODO: Implement generic model for updates and creates
-        public async Task<bool> AddUserToRole(Guid userId, string roleName)
+        public async Task<bool> AddUserRole(Guid userId, Guid roleId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
-            return await _userRepository.AddUserToRole(user, roleName);
+            return await _userRepository.AddUserToRole(user, roleId);
         }
 
-        public Task<bool> RemoveUserFromRole(Guid userId, string roleName)
+        public Task<bool> RemoveUserRole(Guid userId, Guid roleId)
         {
-            return _userRepository.RemoveUserFromRole(userId, roleName);
+            return _userRepository.RemoveUserFromRole(userId, roleId);
+        }
+
+        public Task<bool> AddUserPermission(Guid userId, Guid permissionId)
+        {
+
+
+        }
+
+        public Task<bool> RemoveUserPermission(Guid userId, Guid permissionID)
+        {
+            throw new NotImplementedException();
         }
     }
 }
