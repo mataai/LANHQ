@@ -1,20 +1,26 @@
 ﻿using AutoMapper;
 using Core.DataContracts.Systems.Users;
+using Core.Services;
 using Infrastructure.Repositories.Users.Interfaces;
-using WebAPI.Services.Interfaces;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Internal
 {
-    public class UsersService(IUserRepository userRepository, IMapper mapper) : IUsersService
+    public class UsersService(IUserRepository userRepository, IMapper mapper, IPermissionFetchingService permissionFetchingService) : IUsersService
     {
         //create crud using the user repository
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IMapper _mapper = mapper;
+        private readonly IPermissionFetchingService _permissionFetchingService = permissionFetchingService;
 
         public async Task<ApplicationUserDTO> GetUserById(Guid id)
         {
-            var result = await _userRepository.GetByIdAsync(id);
-            return _mapper.Map<ApplicationUserDTO>(result);
+            var user = await _userRepository.GetByIdAsync(id);
+            var roles = await _userRepository.GetRolesForUser(id);
+            var userDto = _mapper.Map<ApplicationUserDTO>(user);
+            //userDto.Roles = roles;
+            userDto.Permissions = await _permissionFetchingService.GetPermissionsForUser(id);
+
+            return userDto;
         }
 
         public async Task<ApplicationUserDTO> GetUserByUsername(string username)
@@ -32,7 +38,8 @@ namespace WebAPI.Services
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsers()
         {
             var users = await _userRepository.GetUsersAsync();
-            return _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
+            var mapped = _mapper.Map<IEnumerable<ApplicationUserDTO>>(users);
+            return mapped;
         }
 
         public async Task<IEnumerable<ApplicationUserDTO>> GetUsersWithPermission(Guid permissionId)

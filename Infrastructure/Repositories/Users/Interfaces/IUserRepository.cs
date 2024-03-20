@@ -12,7 +12,7 @@ namespace Infrastructure.Repositories.Users.Interfaces
         public Task<IEnumerable<ApplicationUser>> GetUsersAsync();
         public Task<IEnumerable<ApplicationUser>> GetUsersWithPermission(Guid permissionId);
         public Task<IEnumerable<ApplicationUser>> GetUsersWithRole(Guid roleId);
-        public Task<IEnumerable<string>> GetRolesForUser(Guid userId);
+        public Task<IEnumerable<string>> GetRolesForUser(Guid userId);  
         public Task<IEnumerable<string>> GetRolesForUser(string username);
         public Task<bool> AddUserToRole(ApplicationUser user, Guid roleId);
         // Prioritize usage of role name over role id for performance reasons

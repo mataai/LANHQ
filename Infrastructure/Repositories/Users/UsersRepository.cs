@@ -23,14 +23,14 @@ namespace Infrastructure.Repositories.Users
             return false;
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        public Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return Task.FromResult(_context.Users.AsEnumerable());
         }
 
-        public async Task<ApplicationUser> GetByIdAsync(Guid id)
+        public  Task<ApplicationUser> GetByIdAsync(Guid id)
         {
-            return await _context.Users.FindAsync(id) ?? throw new Exception("User not found");
+            return Task.FromResult(_context.Users.Include(x => x.Permissions).FirstOrDefault(x => x.Id == id) ?? throw new Exception("User not found"));
         }
 
         public async Task<ApplicationUser> UpdateAsync(ApplicationUser user)
@@ -60,9 +60,10 @@ namespace Infrastructure.Repositories.Users
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<string>> GetRolesForUser(Guid userId)
+        public async Task<IEnumerable<string>> GetRolesForUser(Guid userId)
         {
-            throw new NotImplementedException();
+            var data = await _userManager.GetRolesAsync(new ApplicationUser { Id = userId});
+            return data;
         }
 
         public Task<IEnumerable<string>> GetRolesForUser(string username)
@@ -73,7 +74,7 @@ namespace Infrastructure.Repositories.Users
         public async Task<bool> AddUserToRole(ApplicationUser user, string roleName)
         {
             var result = await _userManager.AddToRoleAsync(user, roleName);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 // TODO: throw custom exception
                 throw new Exception("Error adding user to role");
@@ -99,7 +100,7 @@ namespace Infrastructure.Repositories.Users
             var user = await _context.Users.FindAsync(userId) ?? throw new Exception("User not found");
 
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 // TODO: throw custom exception
                 throw new Exception("Error removing user from role");

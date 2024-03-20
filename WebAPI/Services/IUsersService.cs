@@ -1,6 +1,6 @@
 ﻿using Core.DataContracts.Systems.Users;
 
-namespace WebAPI.Services.Interfaces
+namespace WebAPI.Services
 {
     public interface IUsersService
     {

@@ -1,5 +1,4 @@
-﻿using Infrastructure.Entities.Generics;
-using Infrastructure.Entities.Users;
+﻿using Infrastructure.Entities.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,20 +21,20 @@ namespace Infrastructure
                 .HasIndex(p => new { p.System, p.Action })
                 .IsUnique();
 
-            modelBuilder.Entity<AuditableEntity>(entity =>
-            {
-                entity
-                    .Property(e => e.Id)
-                    .HasDefaultValueSql("uuid_generate_v4()");
+            //modelBuilder.Entity<AuditableEntity>(entity =>
+            //{
+            //    entity
+            //        .Property(e => e.Id)
+            //        .HasDefaultValueSql("uuid_generate_v4()");
 
-                entity
-                    .Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()");
+            //    entity
+            //        .Property(e => e.CreatedAt)
+            //        .HasDefaultValueSql("GETDATE()");
 
-                entity
-                    .Property(e => e.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-            });
+            //    entity
+            //        .Property(e => e.UpdatedAt)
+            //        .HasDefaultValueSql("GETDATE()");
+            //});
         }
 
 

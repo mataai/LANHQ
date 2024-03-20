@@ -3,9 +3,9 @@ using Core.DataContracts.Systems.Permissions;
 using Core.DataContracts.Systems.Users;
 using Infrastructure.Repositories.Users.Interfaces;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Internal
 {
-    public class RoleService(IRolesRepository roleRepository, IMapper mapper)
+    public class RolesService(IRolesRepository roleRepository, IMapper mapper): IRolesService
     {
         // create crud using the roles repository
         private readonly IRolesRepository _roleRepository = roleRepository;

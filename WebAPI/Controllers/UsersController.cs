@@ -2,13 +2,11 @@
 using Core.DataContracts.Systems.Permissions;
 using Core.DataContracts.Systems.Users;
 using Core.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services.Interfaces;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController(IUsersService usersService, IPermissionFetchingService permissionFetchingService) : ControllerBase
@@ -17,24 +15,24 @@ namespace WebAPI.Controllers
         private readonly IPermissionFetchingService _permissionFetchingService = permissionFetchingService;
 
         [HttpGet]
-        [PermissionAuthorize("users.get")]
-        public ActionResult<IEnumerable<ApplicationUserDTO>> Get() => Ok(_usersService.GetUsers());
+        //[PermissionAuthorize("users.get")]
+        public async Task<ActionResult<IEnumerable<ApplicationUserDTO>>> Get() => Ok(await _usersService.GetUsers());
+
 
         [HttpGet("{id}")]
         [PermissionAuthorize("users.getById")]
         [PermissionAuthorize("users.self")]
-        public ActionResult<ApplicationUserDTO> Get(Guid id) => Ok(_usersService.GetUserById(id));
+        public async Task<ActionResult<ApplicationUserDTO>> Get(Guid id) => Ok(await _usersService.GetUserById(id));
 
         [HttpGet("{id}/roles")]
         [PermissionAuthorize("users.getRoles")]
-        public ActionResult<IEnumerable<string>> GetRoles(Guid id) => Ok(_usersService.GetRolesForUser(id));
-         
+        public async Task<ActionResult<IEnumerable<string>>> GetRoles(Guid id) => Ok(await _usersService.GetRolesForUser(id));
+
         [HttpGet("{id}/permissions")]
         [PermissionAuthorize("users.getPermissions")]
         public async Task<ActionResult<IEnumerable<PermissionDTO>>> GetPermissions(Guid id)
         {
-            var permissions = await _permissionFetchingService.GetPermissionsForUser(id);
-            return Ok(permissions);
+            return Ok(await _permissionFetchingService.GetPermissionsForUser(id));
         }
     }
 }
