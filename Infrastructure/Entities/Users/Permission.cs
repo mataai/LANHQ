@@ -7,6 +7,10 @@
         public string Action { get; set; }
         public string Description { get; set; }
 
+        public virtual ICollection<ApplicationUser> Users { get; set; } = [];
+        public virtual ICollection<ApplicationRole> Roles { get; set; } = [];
+        public Permission() { }
+
         public Permission(string permission, string description)
         {
             System = permission.Split(".")[0];
